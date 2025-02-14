@@ -1,0 +1,19 @@
+[package]
+name = "blitzmap"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+futures = "0.3"
+tokio = { version = "1.36", features = ["full"] }
+colored = "2.1"
+clap = { version = "4.5", features = ["derive"] }
+ipnetwork = "0.20"
+indicatif = "0.17"
+chrono = "0.4"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+locale_config = "0.3"
+chrono-tz = "0.8"
+geoip2 = "0.1"
+maxminddb = "0.23"
