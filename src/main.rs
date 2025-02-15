@@ -643,6 +643,19 @@ async fn main() {
     
     let start_ip = u32::from(ip_range.start);
     let end_ip = u32::from(ip_range.end);
+    let total_ips = (end_ip - start_ip + 1) as u64;
+    
+    // IP diapazonu üçün ümumi irəliləyiş çubuğu
+    let total_pb = if total_ips > 1 {
+        let pb = ProgressBar::new(total_ips);
+        pb.set_style(ProgressStyle::default_bar()
+            .template("{spinner:.green} [{elapsed_precise}] [{bar:40.red/blue}] {pos}/{len} IPs ({eta})")
+            .unwrap()
+            .progress_chars("█▓▒░-"));
+        Some(pb)
+    } else {
+        None
+    };
     
     for ip_int in start_ip..=end_ip {
         let current_ip = Ipv4Addr::from(ip_int);
@@ -700,6 +713,16 @@ async fn main() {
             }
             total_results.append(&mut results);
         }
+        
+        // IP skanı tamamlandıqda tərəqqi panelini yeniləyin
+        if let Some(pb) = &total_pb {
+            pb.inc(1);
+        }
+    }
+
+    // Tərəqqi çubuğunu tamamlayın
+    if let Some(pb) = total_pb {
+        pb.finish_with_message("IP scan completed");
     }
 
     let duration = start_time.elapsed().as_secs_f64();
@@ -716,9 +739,9 @@ async fn main() {
         .sum::<u16>();
     
     let time_str = if minutes > 0.0 {
-        format!("{:.0} minutes {:.0} seconds", minutes, seconds)
+        format!("{} minutes {} seconds", minutes as u32, seconds as u32)
     } else {
-        format!("{:.1} seconds", seconds)
+        format!("{:.2} seconds", seconds)
     };
     
     let summary = format!(
